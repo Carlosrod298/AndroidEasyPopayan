@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">Easypopayan</string>
-    <string name="startLabel">Estación Inicio</string>
-    <string name="endLabel">Estación Final</string>
-    <string name="viewRoutes">Ver Rutas Disponibles</string>
+    <string name="startLabel">start station</string>
+    <string name="endLabel">End station</string>
+    <string name="viewRoutes">Find Routes</string>
     <string name="title_activity_available_routs">AvailableRouts</string>
+
+    <string name="help">More Help</string>
+    <string name="option">More Options</string>
+    <string name="menuTitle">Options</string>
+    <string name="favorite">Favorite</string>
+    <string name="stations">Stations</string>
+    <string name="qrcode">QRCode</string>
+    <string name="helptitle">Help</string>
 </resources>

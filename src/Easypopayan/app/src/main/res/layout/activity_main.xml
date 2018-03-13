@@ -1,49 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.david.easypopayan.MainActivity">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="260dp"
+    android:padding="35px">
 
-    <Spinner
-        android:id="@+id/finalList"
-        android:layout_width="191dp"
-        android:layout_height="21dp"
-        tools:layout_editor_absoluteX="122dp"
-        tools:layout_editor_absoluteY="66dp" />
+    <ImageView
+        android:id="@+id/QrIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/Favorite"
+        android:layout_toEndOf="@+id/finalList"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
+        android:paddingTop="5px"
+        android:src="@drawable/add_qr" />
+
+    <ImageView
+        android:id="@+id/Favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="37dp"
+        android:layout_toStartOf="@+id/QrIcon"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
+        android:paddingTop="5px"
+        android:src="@drawable/favorite" />
 
     <TextView
         android:id="@+id/startLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/startLabel"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="27dp" />
+        android:paddingTop="15px"/>
+
+    <Spinner
+        android:id="@+id/startList"
+        android:layout_width="191dp"
+        android:layout_height="25dp"
+        android:layout_alignBottom="@+id/startLabel"
+        android:layout_alignStart="@+id/finalList"
+        android:paddingTop="10px" />
+
 
     <TextView
         android:id="@+id/finalLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/endLabel"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="66dp" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/startLabel"
+        android:layout_marginTop="15dp"
+        android:paddingTop="10px"
+        android:text="@string/endLabel" />
 
     <Spinner
-        android:id="@+id/startList"
+        android:id="@+id/finalList"
         android:layout_width="191dp"
-        android:layout_height="21dp"
-        tools:layout_editor_absoluteX="122dp"
-        tools:layout_editor_absoluteY="27dp" />
+        android:layout_height="25dp"
+        android:layout_alignTop="@+id/finalLabel"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@+id/startLabel"
+        android:paddingTop="10px" />
+
 
     <Button
         android:id="@+id/viewRoutes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/viewRoutes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="412dp" />
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="15dp"
+        android:paddingTop="10px"
+        android:text="@string/viewRoutes" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
