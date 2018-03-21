@@ -87,26 +87,26 @@ public class OperacionesBaseD {
     public boolean updateEstacion(DetailsStation Station) {
         SQLiteDatabase db = baseDatos.getWritableDatabase();
 
-        String selection = String.format("%s=? AND %s=?",
-                transporte.CabEstaciones.ID, Station.ID);
-
+        String selection = String.format("%s=? ",transporte.CabEstaciones.ID);
+        String[] selectionArgs = {String.valueOf(Station.ID)};
         ContentValues valores = new ContentValues();
-        valores.put(transporte.CabEstaciones.ID, Station.ID_estacion);
+        //valores.put(transporte.CabEstaciones.ID, Station.ID_estacion);
         valores.put(transporte.CabEstaciones.Estaciones, Station.Estaciones);
         valores.put(transporte.CabEstaciones.Latitud, Station.Latitud);
         valores.put(transporte.CabEstaciones.Longitud, Station.Longitud);
         return db.update(BaseST.Tablas.ESTACIONES, valores, selection,
-                null) > 0;
+                selectionArgs) > 0;
     }
 
     public boolean updateRuta(DetailsRutas Ruta) {
         SQLiteDatabase db = baseDatos.getWritableDatabase();
 
-        String selection = String.format("%s=? AND %s=?",
-                transporte.CabRutas.ID, Ruta.idRuta);
+        String selection = String.format("%s=? ",transporte.CabRutas.ID);
+        String[] selectionArg = {String.valueOf(Ruta.idRuta)};
+
 
         ContentValues valores = new ContentValues();
-        valores.put(transporte.CabRutas.ID, Ruta.idRuta);
+        //valores.put(transporte.CabRutas.ID, Ruta.idRuta);
         valores.put(transporte.CabRutas.Ruta, Ruta.Ruta);
         valores.put(transporte.CabRutas.Empresa, Ruta.empresa);
         valores.put(transporte.CabRutas.id_ruta, Ruta.idRuta1);
@@ -114,20 +114,20 @@ public class OperacionesBaseD {
         valores.put(transporte.CabRutas.EsInicial, Ruta.estinicial);
         valores.put(transporte.CabRutas.EsFinal, Ruta.estfinal);
         return db.update(BaseST.Tablas.RUTAS, valores, selection,
-                null) > 0;
+                selectionArg) > 0;
     }
 
     public boolean updateFavorito(DetailsFavoritos favor) {
         SQLiteDatabase db = baseDatos.getWritableDatabase();
 
-        String selection = String.format("%s=? AND %s=?",
-                transporte.CabEstaciones.ID, favor.idRuta);
-
+        String selection = String.format("%s=? ",
+                transporte.CabEstaciones.ID);
+        String[] selectionArg = {String.valueOf(favor.idRuta)};
         ContentValues valores = new ContentValues();
-        valores.put(transporte.CabFavoritos.ID, favor.idRuta);
+        //valores.put(transporte.CabFavoritos.ID, favor.idRuta);
         valores.put(transporte.CabFavoritos.Rutas, favor.Ruta);
         return db.update(BaseST.Tablas.ESTACIONES, valores, selection,
-                null) > 0;
+                selectionArg) > 0;
     }
 
 

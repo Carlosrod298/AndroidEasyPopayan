@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -36,8 +38,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 
 public class MainActivity extends AppCompatActivity
@@ -73,6 +85,9 @@ public class MainActivity extends AppCompatActivity
     Bitmap smallMarkerBusInit;
     Bitmap smallMarkerBusFinal;
 
+    private String serviceURL;
+    private HttpRequest req;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -100,98 +115,68 @@ public class MainActivity extends AppCompatActivity
         bitMap = ((BitmapDrawable) getResources().getDrawable(R.drawable.bus_final, null)).getBitmap();
         smallMarkerBusFinal = Bitmap.createScaledBitmap(bitMap, width, height, false);
 
+        // conexion con el servidor
+        serviceURL = getString(R.string.url);
+
         //Creacion del menu contextual
         //registerForContextMenu(myListView);
 
         // open data base
         Log.d("Estaciones","Estaciones");
         BaseDatos = OperacionesBaseD.obtenerInstancia(getApplication());
-        BaseDatos.obtenerEstaciones();
-
-        //long infor = BaseDatos.insertarFavoritos(new DetailsFavoritos(1,"Casa"));
-        //boolean answer = BaseDatos.EliminarRuta("1");
-        //answer = BaseDatos.EliminarEstacion("2");
-        /*
-        long infor = BaseDatos.insertarEstacion(new DetailsStation
-                (1,2.459178,-76.593670,"Campanario",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (2,2.476087,-76.570584,"Pisoje",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (3,2.447131,-76.598143,"UniCauca Tulcan",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (4,2.455350,-76.597140,"Hotel San Martin",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (5,2.455247,-76.592215,"Estadio",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (6,2.456335,-76.591459,"Virgen de los Hoyos",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (7,2.437551,-76.618587,"Hospital Susana Lopez",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (8,2.430668,-76.610773,"Colegio los Comuneros",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (9,2.453044,-76.601943,"Restaurante Carantanta",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (10,2.452411,-76.603518,"Parque el Quijote",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (11,2.448353,-76.603279,"Parque Carlos Alban",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (12,2.444696,-76.605097,"Puente Humilladero",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (13,2.434734,-76.611462,"I.E. Don Bosco",5));
-        infor = BaseDatos.insertarEstacion(new DetailsStation
-                (14,2.434102,-76.606430,"Parque Alfonso Lopez",5));*/
-
-/*
-        infor = BaseDatos.insertarRutas(new DetailsRutas(1,"Ruta1",
-                "TransLibertad",5,1600,7,14,3,2,4,9));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(2,"Ruta2",
-                "TransLibertad",5,1600,2,13,4,7,5,10));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(3,"Ruta3",
-                "TransLibertad",5,1600,2,11,6,5,4,8));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(4,"Ruta4",
-                "TransLibertad",5,1600,7,13,2,3,4,7));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(5,"Ruta5",
-                "TransLibertad",5,1600,7,10,5,3,6,4));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(6,"Ruta3",
-                "TransTambo",5,1600,2,11,6,5,4,8));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(7,"Ruta4",
-                "TransTambo",5,1600,7,13,2,3,4,7));
-        infor = BaseDatos.insertarRutas(new DetailsRutas(8,"Ruta5",
-                "TransTambo",5,1600,7,10,5,3,6,4));*/
-
-        /*DatabaseUtils.dumpCursor(BaseDatos.obtenerEstaciones());
-        DatabaseUtils.dumpCursor(BaseDatos.obtenerRutas());
-        DatabaseUtils.dumpCursor(BaseDatos.obtenerFavoritos());*/
+        //BaseDatos.obtenerEstaciones();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Getting the instance of Spinner and applying OnItemSelectedListener on it
+        spinnerInitial = (Spinner) findViewById(R.id.startList);
+        spinnerInitial.setOnItemSelectedListener(this);
+        //Creating the ArrayAdapter instance having the bank name list
+        spinerini = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_item,
+                list);
+        spinerini.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Setting the ArrayAdapter data on the Spinner
+        spinnerInitial.setAdapter(spinerini);
+
+        //Getting the instance of Spinner and applying OnItemSelectedListener on it
+        spinnerFinal = (Spinner) findViewById(R.id.finalList);
+        spinnerFinal.setOnItemSelectedListener(this);
+        //Creating the ArrayAdapter instance having the bank name list
+        spinerfin = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_item,
+                list);
+        spinerfin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Setting the ArrayAdapter data on the Spinner
+        spinnerFinal.setAdapter(spinerfin);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> arg0, View view, int position,long id) {
 
 
-        for (Marker marker:makersMapList
-             ) {
+        for (Marker marker : makersMapList
+                ) {
             marker.setIcon(BitmapDescriptorFactory.fromBitmap(smallMarkerBusStop));
         }
-        if(arg0 == spinnerInitial){
-            Toast.makeText(getApplicationContext(),"Initial station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-        }
-        else if (arg0 == spinnerFinal){
-            Toast.makeText(getApplicationContext(), "End station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-        }
 
-        int posini = spinnerInitial.getSelectedItemPosition();
         int posfin = spinnerFinal.getSelectedItemPosition();
+        int posini = spinnerInitial.getSelectedItemPosition();
 
+        if (arg0 == spinnerInitial) {
+            Toast.makeText(getApplicationContext(), "Initial station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            makersMapList.get(posini).showInfoWindow();
+
+        } else if (arg0 == spinnerFinal) {
+
+            Toast.makeText(getApplicationContext(), "End station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            makersMapList.get(posfin).showInfoWindow();
+        }
         makersMapList.get(posini).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarkerBusInit));
-        makersMapList.get(posini).showInfoWindow();
-
         makersMapList.get(posfin).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarkerBusFinal));
-        makersMapList.get(posfin).showInfoWindow();
     }
 
     @Override
@@ -255,9 +240,25 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if(view == FavoritosBnt){
-            Intent i = new Intent(this, Favorites.class);
-            i.setClassName("com.example.david.easypopayan","com.example.david.easypopayan.Favorites");
-            startActivity(i);
+            Cursor cursor = BaseDatos.obtenerFavoritos();
+
+            if(cursor.getCount()==0) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Mensaje")
+                        .setMessage("No tienes favoritos")
+                        //.setIcon(R.drawable.ok)
+                        .setNeutralButton("Cerrar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dlg, int sumthin) {
+                                // do nothing -- it will close on its own
+                            }
+                        })
+                        .show();
+            }
+            else {
+                Intent i = new Intent(this, Favorites.class);
+                i.setClassName("com.example.david.easypopayan", "com.example.david.easypopayan.Favorites");
+                startActivity(i);
+            }
         }
         if(view == QrIcon){
             addQR();
@@ -280,6 +281,13 @@ public class MainActivity extends AppCompatActivity
     private void prepareStations(Cursor cursor) {
 
         StationList.clear();
+        list.clear();
+        for (Marker marker: makersMapList
+                ) {
+            marker.remove();
+        }
+        makersMapList.clear();
+
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 long ID = cursor.getInt(cursor.getColumnIndex(transporte.CabEstaciones.ID));
@@ -294,6 +302,9 @@ public class MainActivity extends AppCompatActivity
                 cursor.moveToNext();
             }
         }
+
+        spinerini.notifyDataSetChanged();
+        spinerfin.notifyDataSetChanged();
     }
 
     private void addQR() {
@@ -319,8 +330,6 @@ public class MainActivity extends AppCompatActivity
                 Log.i("INDEX!!!", String.valueOf(index));
                 if(index != -1){
                     spinnerInitial.setSelection(index);
-                    makersMapList.get(index).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarkerBusInit));
-                    makersMapList.get(index).showInfoWindow();
                 }
 
                 //list.add(0, contents);
@@ -353,33 +362,6 @@ public class MainActivity extends AppCompatActivity
         mMap.setMaxZoomPreference(18.0f);
         mMap.setMinZoomPreference(13.5f);
 
-        Log.d("Estaciones","Base de datos");
-        prepareStations(BaseDatos.obtenerEstaciones());
-        //new TareaPruebaDatos().execute();
-
-        //Getting the instance of Spinner and applying OnItemSelectedListener on it
-        spinnerInitial = (Spinner) findViewById(R.id.startList);
-        spinnerInitial.setOnItemSelectedListener(this);
-        //Creating the ArrayAdapter instance having the bank name list
-        spinerini = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_item,
-                list);
-        spinerini.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //Setting the ArrayAdapter data on the Spinner
-        spinnerInitial.setAdapter(spinerini);
-
-        //Getting the instance of Spinner and applying OnItemSelectedListener on it
-        spinnerFinal = (Spinner) findViewById(R.id.finalList);
-        spinnerFinal.setOnItemSelectedListener(this);
-        //Creating the ArrayAdapter instance having the bank name list
-        spinerfin = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_item,
-                list);
-
-        spinerfin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //Setting the ArrayAdapter data on the Spinner
-        spinnerFinal.setAdapter(spinerfin);
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             return;
@@ -387,6 +369,9 @@ public class MainActivity extends AppCompatActivity
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+
+        Log.d("Estaciones","Base de datos");
+        prepareStations(BaseDatos.obtenerEstaciones());
 
     }
 
@@ -411,4 +396,109 @@ public class MainActivity extends AppCompatActivity
         // (the camera animates to the user's current position).
         return false;
     }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String responseBody = (String) msg.obj;
+            Log.i("HTTP MESSAGE",responseBody);
+            try{
+               // buildForecasts(responseBody);
+               // String page = generatePage();
+               // browser.loadDataWithBaseURL(null, page, "text/html", "UTF-8", null);
+                buildStationsCasts(responseBody);
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateStationcast();
+
+    }
+
+    private void updateStationcast() {
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    req = new HttpRequest(serviceURL);
+                    Message msg = new Message();
+                    msg.obj = req.prepare(HttpRequest.Method.GET).sendAndReadString();
+                    handler.sendMessage(msg);
+                } catch (Exception e) {
+                    //Toast.makeText(WeatherDemo.this, "Request failed: " + e.getMessage(), Toast.LENGTH_LONG)
+                    //      .show();
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
+
+    void buildStationsCasts(String raw) throws Exception {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder();
+        Document doc = builder.parse(new InputSource(new StringReader(raw)));
+        doc.getDocumentElement().normalize();
+        NodeList stationList = doc.getElementsByTagName("current_Station");
+
+        String IDstr;
+        String Latitudestr;
+        String Longitudestr;
+        String Namestr;
+        String IDStationstr;
+
+        for (int i = 0; i < stationList.getLength(); i++) {
+
+            Node stateItem = (Element) stationList.item(i);
+            if (stateItem.getNodeType() == Node.ELEMENT_NODE) {
+
+                Element stationItemElement = (Element) stateItem;
+                NodeList IDlist = stationItemElement.getElementsByTagName("Id");
+                Element IDElement = (Element) IDlist.item(0);
+
+                NodeList latitudeList = stationItemElement.getElementsByTagName("Latitud");
+                Element latitudeElement = (Element) latitudeList.item(0);
+
+                NodeList longitudeList = stationItemElement.getElementsByTagName("Longitud");
+                Element longitudeElement = (Element) longitudeList.item(0);
+
+                NodeList nameStationList = stationItemElement.getElementsByTagName("Name");
+                Element nameElement = (Element) nameStationList.item(0);
+
+                NodeList idStationList = stationItemElement.getElementsByTagName("ID_station");
+                Element idStationElement = (Element) idStationList.item(0);
+
+                IDstr =  IDElement.getAttribute("data");
+                Latitudestr = latitudeElement.getAttribute("data");
+                Longitudestr = longitudeElement.getAttribute("data");
+                Namestr = nameElement.getAttribute("data");
+                IDStationstr = idStationElement.getAttribute("data");
+
+                DetailsStation Station = new DetailsStation(Long.parseLong(IDstr),
+                                        Double.parseDouble(Latitudestr),
+                                        Double.parseDouble(Longitudestr),
+                                        Namestr,
+                                        Long.parseLong(IDStationstr));
+                if(BaseDatos.updateEstacion(Station)){
+                     Log.i("UPDATED", Station.Estaciones);
+                }
+                else{
+                    Log.i("Insert", Station.Estaciones);
+                    BaseDatos.insertarEstacion(Station);
+                }
+
+
+            }
+        }
+        prepareStations(BaseDatos.obtenerEstaciones());
+    }
+
+
 }

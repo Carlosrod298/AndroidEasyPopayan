@@ -12,4 +12,6 @@
     <string name="stations">Estaciones</string>
     <string name="qrcode">QRCodigo</string>
     <string name="helptitle">Ayuda</string>
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyD-hwmvJFZF6nHh1u8XvY_BsVqSf2aDChc</string>
 </resources>
