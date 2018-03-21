@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="260dp"
+    android:layout_height="match_parent"
     android:padding="15dp">
 
     <ImageView
@@ -31,13 +30,13 @@
         android:id="@+id/startLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/startLabel"
-        android:paddingTop="15px"/>
+        android:paddingTop="15px"
+        android:text="@string/startLabel" />
 
     <Spinner
         android:id="@+id/startList"
         android:layout_width="191dp"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/startLabel"
         android:layout_alignStart="@+id/finalList"
         android:padding="10px"
@@ -57,7 +56,7 @@
     <Spinner
         android:id="@+id/finalList"
         android:layout_width="191dp"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/finalLabel"
         android:layout_toEndOf="@+id/startLabel"
         android:padding="10px"
@@ -68,9 +67,20 @@
         android:id="@+id/viewRoutes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:paddingTop="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="10px"
         android:text="@string/viewRoutes" />
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/QrIcon"
+        android:layout_below="@+id/QrIcon" />
+
 
 </RelativeLayout>

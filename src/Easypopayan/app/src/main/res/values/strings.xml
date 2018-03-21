@@ -13,4 +13,5 @@
     <string name="qrcode">QRCode</string>
     <string name="helptitle">Help</string>
 
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyD-hwmvJFZF6nHh1u8XvY_BsVqSf2aDChc</string>
 </resources>

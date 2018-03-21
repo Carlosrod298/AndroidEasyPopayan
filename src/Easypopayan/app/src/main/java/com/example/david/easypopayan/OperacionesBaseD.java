@@ -212,7 +212,6 @@ public class OperacionesBaseD {
         return result;
     }
 
-
     public DetailsRutas obtenerRutasPorId(String id) {
         SQLiteDatabase db = baseDatos.getWritableDatabase();
 

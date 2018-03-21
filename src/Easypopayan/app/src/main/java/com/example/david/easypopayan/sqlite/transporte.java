@@ -1,4 +1,6 @@
 package com.example.david.easypopayan.sqlite;
+import com.google.android.gms.maps.model.Marker;
+
 import java.util.UUID;
 /**
  * Created by david on 13/03/18.
@@ -12,6 +14,7 @@ public class transporte {
         String Longitud = "longitud";
         String Estaciones = "Estaciones";
         String ID_estacion = "id_estacion";
+        Marker maker = null;
     }
 
     interface Rutas{
