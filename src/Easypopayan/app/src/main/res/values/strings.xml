@@ -4,7 +4,7 @@
     <string name="endLabel">End station</string>
     <string name="viewRoutes">Find Routes</string>
     <string name="title_activity_available_routs">AvailableRouts</string>
-
+    <string name="scancanceled">Scan canceled</string>
     <string name="help">More Help</string>
     <string name="option">More Options</string>
     <string name="menuTitle">Options</string>
@@ -12,4 +12,5 @@
     <string name="stations">Stations</string>
     <string name="qrcode">QRCode</string>
     <string name="helptitle">Help</string>
+
 </resources>

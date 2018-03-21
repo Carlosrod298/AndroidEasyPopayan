@@ -21,16 +21,37 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/details"
+        android:id="@+id/empresa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name" />
 
     <TextView
-        android:id="@+id/timeEstimated"
+        android:id="@+id/precio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignRight="@id/name"
+        android:textColor="@color/timeEstimatedColor" />
+
+    <TextView
+        android:id="@+id/timeestimated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/precio"
+        android:layout_alignRight="@id/name"
+        android:textColor="@color/timeEstimatedColor" />
+
+    <TextView
+        android:id="@+id/E_ini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/empresa"
+        android:textColor="@color/timeEstimatedColor" />
+    <TextView
+        android:id="@+id/E_fin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/E_ini"
         android:textColor="@color/timeEstimatedColor" />
 
 </RelativeLayout>

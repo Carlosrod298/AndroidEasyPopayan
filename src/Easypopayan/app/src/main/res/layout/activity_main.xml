@@ -3,16 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="260dp"
-    android:padding="35px">
+    android:padding="15dp">
 
     <ImageView
         android:id="@+id/QrIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/Favorite"
-        android:layout_toEndOf="@+id/finalList"
+        android:layout_below="@+id/Favorite"
         android:paddingLeft="5px"
         android:paddingRight="5px"
         android:paddingTop="5px"
@@ -22,9 +20,8 @@
         android:id="@+id/Favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="37dp"
-        android:layout_toStartOf="@+id/QrIcon"
+        android:layout_alignStart="@+id/QrIcon"
+        android:layout_alignTop="@+id/startList"
         android:paddingLeft="5px"
         android:paddingRight="5px"
         android:paddingTop="5px"
@@ -43,6 +40,7 @@
         android:layout_height="25dp"
         android:layout_alignBottom="@+id/startLabel"
         android:layout_alignStart="@+id/finalList"
+        android:padding="10px"
         android:paddingTop="10px" />
 
 
@@ -61,8 +59,8 @@
         android:layout_width="191dp"
         android:layout_height="25dp"
         android:layout_alignTop="@+id/finalLabel"
-        android:layout_marginStart="13dp"
         android:layout_toEndOf="@+id/startLabel"
+        android:padding="10px"
         android:paddingTop="10px" />
 
 
@@ -70,9 +68,9 @@
         android:id="@+id/viewRoutes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="15dp"
-        android:paddingTop="10px"
+        android:paddingTop="10dp"
         android:text="@string/viewRoutes" />
 
 </RelativeLayout>
