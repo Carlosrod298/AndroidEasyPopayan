@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.david.easypopayan.model.DetailsRutas;
 import com.example.david.easypopayan.model.DetailsStation;
 import com.example.david.easypopayan.sqlite.transporte;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,6 +72,9 @@ public class MainActivity extends AppCompatActivity
     OperacionesBaseD BaseDatos;
 
     private List<DetailsStation> StationList = new ArrayList<>();
+    private List<DetailsStation> StationURL = new ArrayList<>();
+    private List<DetailsRutas> RoutesURL = new ArrayList<>();
+
     final List<String> list = new ArrayList<String>();
     List<Marker> makersMapList= new ArrayList<>();
 
@@ -85,8 +89,12 @@ public class MainActivity extends AppCompatActivity
     Bitmap smallMarkerBusInit;
     Bitmap smallMarkerBusFinal;
 
-    private String serviceURL;
-    private HttpRequest req;
+    private String URLStation;
+    private String URLRoutes;
+    private HttpRequest reqStation;
+    private HttpRequest reqRoutes;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +124,8 @@ public class MainActivity extends AppCompatActivity
         smallMarkerBusFinal = Bitmap.createScaledBitmap(bitMap, width, height, false);
 
         // conexion con el servidor
-        serviceURL = getString(R.string.url);
+        URLStation  = getString(R.string.urlStation);
+        URLRoutes = getString(R.string.urlRoutes);
 
         //Creacion del menu contextual
         //registerForContextMenu(myListView);
@@ -278,7 +287,7 @@ public class MainActivity extends AppCompatActivity
        //     viewRoutesBnt.setVisibility(View.VISIBLE);
        // }
     }
-    private void prepareStations(Cursor cursor) {
+    public void prepareStations(Cursor cursor) {
 
         StationList.clear();
         list.clear();
@@ -397,23 +406,7 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            String responseBody = (String) msg.obj;
-            Log.i("HTTP MESSAGE",responseBody);
-            try{
-               // buildForecasts(responseBody);
-               // String page = generatePage();
-               // browser.loadDataWithBaseURL(null, page, "text/html", "UTF-8", null);
-                buildStationsCasts(responseBody);
 
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-    };
 
     @Override
     public void onResume() {
@@ -422,15 +415,56 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void updateStationcast() {
 
+    Handler handlerSta = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String responseText = (String) msg.obj;
+            Log.i("HTTP MESSAGE",responseText);
+            try{
+                OperacionesURL ListasUrl = new OperacionesURL(responseText);
+                StationURL = ListasUrl.buildStationsCasts();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    Handler handlerRout = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String responseText = (String) msg.obj;
+            Log.i("HTTP MESSAGE",responseText);
+            try{
+                OperacionesURL ListasUrl = new OperacionesURL(responseText);
+                RoutesURL = ListasUrl.buildRoutesCasts();
+                Log.i("MESSAGE","RoutesUrL");
+                updateDatabases();
+            }
+            catch (Exception e){
+                Log.i("HTTP MESSAGE","execption");
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    public void updateStationcast() {
         Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
-                    req = new HttpRequest(serviceURL);
-                    Message msg = new Message();
-                    msg.obj = req.prepare(HttpRequest.Method.GET).sendAndReadString();
-                    handler.sendMessage(msg);
+                    // conexion con el servidor
+                    reqStation = new HttpRequest(URLStation);
+                    reqRoutes = new HttpRequest(URLRoutes);
+                    Message StationMsg = new Message();
+                    Message RoutesMsg = new Message();
+                    StationMsg.obj = reqStation.prepare(HttpRequest.Method.GET).sendAndReadString();
+                    RoutesMsg.obj = reqRoutes.prepare(HttpRequest.Method.GET).sendAndReadString();
+                    handlerSta.sendMessage(StationMsg);
+                    handlerRout.sendMessage(RoutesMsg);
+
                 } catch (Exception e) {
                     //Toast.makeText(WeatherDemo.this, "Request failed: " + e.getMessage(), Toast.LENGTH_LONG)
                     //      .show();
@@ -441,64 +475,31 @@ public class MainActivity extends AppCompatActivity
         t.start();
     }
 
-    void buildStationsCasts(String raw) throws Exception {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder();
-        Document doc = builder.parse(new InputSource(new StringReader(raw)));
-        doc.getDocumentElement().normalize();
-        NodeList stationList = doc.getElementsByTagName("current_Station");
-
-        String IDstr;
-        String Latitudestr;
-        String Longitudestr;
-        String Namestr;
-        String IDStationstr;
-
-        for (int i = 0; i < stationList.getLength(); i++) {
-
-            Node stateItem = (Element) stationList.item(i);
-            if (stateItem.getNodeType() == Node.ELEMENT_NODE) {
-
-                Element stationItemElement = (Element) stateItem;
-                NodeList IDlist = stationItemElement.getElementsByTagName("Id");
-                Element IDElement = (Element) IDlist.item(0);
-
-                NodeList latitudeList = stationItemElement.getElementsByTagName("Latitud");
-                Element latitudeElement = (Element) latitudeList.item(0);
-
-                NodeList longitudeList = stationItemElement.getElementsByTagName("Longitud");
-                Element longitudeElement = (Element) longitudeList.item(0);
-
-                NodeList nameStationList = stationItemElement.getElementsByTagName("Name");
-                Element nameElement = (Element) nameStationList.item(0);
-
-                NodeList idStationList = stationItemElement.getElementsByTagName("ID_station");
-                Element idStationElement = (Element) idStationList.item(0);
-
-                IDstr =  IDElement.getAttribute("data");
-                Latitudestr = latitudeElement.getAttribute("data");
-                Longitudestr = longitudeElement.getAttribute("data");
-                Namestr = nameElement.getAttribute("data");
-                IDStationstr = idStationElement.getAttribute("data");
-
-                DetailsStation Station = new DetailsStation(Long.parseLong(IDstr),
-                                        Double.parseDouble(Latitudestr),
-                                        Double.parseDouble(Longitudestr),
-                                        Namestr,
-                                        Long.parseLong(IDStationstr));
-                if(BaseDatos.updateEstacion(Station)){
-                     Log.i("UPDATED", Station.Estaciones);
-                }
-                else{
-                    Log.i("Insert", Station.Estaciones);
-                    BaseDatos.insertarEstacion(Station);
-                }
-
-
+    public void updateDatabases() {
+        Log.i("UPDATED", "Updating1");
+        for(DetailsStation Station:StationURL){
+            Log.i("UPDATED", "Updating2");
+            if(BaseDatos.updateEstacion(Station)){
+                Log.i("UPDATED", Station.Estaciones);
+            }
+            else{
+                Log.i("Insert", Station.Estaciones);
+                BaseDatos.insertarEstacion(Station);
             }
         }
-        prepareStations(BaseDatos.obtenerEstaciones());
+        for(DetailsRutas Routes:RoutesURL){
+            Log.i("UPDATED", "Updating4");
+            if(BaseDatos.updateRuta(Routes)){
+                Log.i("UPDATED", Routes.Ruta);
+            }
+            else{
+                Log.i("Insert", Routes.Ruta);
+                BaseDatos.insertarRutas(Routes);
+            }
+        }
+
     }
+
 
 
 }

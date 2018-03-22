@@ -14,5 +14,7 @@
     <string name="helptitle">Help</string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyD-hwmvJFZF6nHh1u8XvY_BsVqSf2aDChc</string>
-    <string name="url">http://10.0.2.2:8080/StationsCast.xml</string>
+    <string name="urlStation">http://10.0.2.2:8080/StationsCast.xml</string>
+    <string name="urlRoutes">http://10.0.2.2:8080/RoutesCast.xml</string>
+    <string name="urlFavo">http://10.0.2.2:8080/FavoriteCast.xml</string>
 </resources>

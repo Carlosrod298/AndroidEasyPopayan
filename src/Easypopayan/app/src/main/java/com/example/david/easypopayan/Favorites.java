@@ -51,7 +51,7 @@ public class Favorites extends Activity {
         recyclerView.setAdapter(mAdapter);
 
         BaseDatos = OperacionesBaseD.obtenerInstancia(getApplication());
-        prepareRouteData();
+        prepareRouteData2();
 
 
     }
@@ -65,7 +65,7 @@ public class Favorites extends Activity {
 
 
 
-    private void prepareRouteData() {
+    private void prepareRouteData2() {
         FavoList.clear();
         Cursor cursor = BaseDatos.obtenerFavoritos();
 
