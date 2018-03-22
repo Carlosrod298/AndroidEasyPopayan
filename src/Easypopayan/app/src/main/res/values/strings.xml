@@ -17,4 +17,8 @@
     <string name="urlStation">http://10.0.2.2:8080/StationsCast.xml</string>
     <string name="urlRoutes">http://10.0.2.2:8080/RoutesCast.xml</string>
     <string name="urlFavo">http://10.0.2.2:8080/FavoriteCast.xml</string>
+
+    <string name="menu_title">Selected task</string>
+    <string name="add_favorite">Add To Favorites</string>
+    <string name="see_details">Details</string>
 </resources>

@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.david.easypopayan.model.DetailsFavoritos;
 import com.example.david.easypopayan.model.DetailsRutas;
 import com.example.david.easypopayan.model.DetailsStation;
 import com.example.david.easypopayan.sqlite.transporte;
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity
         //Creacion del menu contextual
         //registerForContextMenu(myListView);
 
+
         // open data base
         Log.d("Estaciones","Estaciones");
         BaseDatos = OperacionesBaseD.obtenerInstancia(getApplication());
@@ -161,6 +163,10 @@ public class MainActivity extends AppCompatActivity
         spinerfin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //Setting the ArrayAdapter data on the Spinner
         spinnerFinal.setAdapter(spinerfin);
+
+        long infor = BaseDatos.insertarFavoritos(new DetailsFavoritos(1,"Casa"));
+        infor = BaseDatos.insertarFavoritos(new DetailsFavoritos(5,"Trabajo"));
+
     }
 
     @Override
@@ -176,12 +182,12 @@ public class MainActivity extends AppCompatActivity
         int posini = spinnerInitial.getSelectedItemPosition();
 
         if (arg0 == spinnerInitial) {
-            Toast.makeText(getApplicationContext(), "Initial station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Initial station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
             makersMapList.get(posini).showInfoWindow();
 
         } else if (arg0 == spinnerFinal) {
 
-            Toast.makeText(getApplicationContext(), "End station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "End station: " + spinnerInitial.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
             makersMapList.get(posfin).showInfoWindow();
         }
         makersMapList.get(posini).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarkerBusInit));

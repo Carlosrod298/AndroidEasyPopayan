@@ -14,4 +14,8 @@
     <string name="helptitle">Ayuda</string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyD-hwmvJFZF6nHh1u8XvY_BsVqSf2aDChc</string>
+    <string name="menu_title">Seleccionar Tarea</string>
+    <string name="add_favorite">Agregar a Favoritos</string>
+    <string name="see_details">Detalles</string>
+
 </resources>

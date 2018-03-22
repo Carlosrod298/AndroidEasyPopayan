@@ -7,7 +7,11 @@ package com.example.david.easypopayan;
 import android.content.Context;
 import android.renderscript.Sampler;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -18,8 +22,11 @@ import com.example.david.easypopayan.model.DetailsStation;
 
 import java.util.List;
 
-class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener
-{
+class RecyclerViewHolder extends RecyclerView.ViewHolder
+        implements View.OnCreateContextMenuListener {
+
+    static final private int REMOVE_TODO = Menu.FIRST;
+    static final private int SEND_TODO = Menu.FIRST+1;
 
     public TextView ruta;
     public TextView empresa;
@@ -37,29 +44,23 @@ class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClick
         eincial = (TextView)itemView.findViewById(R.id.E_ini);
         efinal = (TextView)itemView.findViewById(R.id.E_fin);
         timeestimated =(TextView)itemView.findViewById(R.id.timeestimated);
-        itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
-    }
+        //itemView.setOnClickListener(this);
+        //itemView.setOnLongClickListener(this);
 
-    public void setItemClickListener(ItemClickListener itemClickListener)
-    {
-        this.itemClickListener= itemClickListener;
-    }
-
-    @Override
-    public void onClick(View v) {
-        itemClickListener.onClick(v,getAdapterPosition(),false);
+        itemView.setOnCreateContextMenuListener(this);
 
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        itemClickListener.onClick(v,getAdapterPosition(),true);
-        return true;
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        //menuInfo is null
+        menu.setHeaderTitle(R.string.menu_title);
+        menu.add(0, v.getId(), 0, R.string.see_details);
+        menu.add(0, v.getId(), 0, R.string.add_favorite);
     }
+
 }
-
-
 
 public class RoutesAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
 
@@ -72,20 +73,17 @@ public class RoutesAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         this.context = context;
     }
 
-
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         /*LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.route_list_row, parent, false);*/
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.route_list_row,
                 parent,false);
-
         return new RecyclerViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-
+    public void onBindViewHolder(final RecyclerViewHolder holder, int position) {
 
         DetailsRutas RouteData  = routeList.get(position);
         holder.ruta.setText("Ruta: "+RouteData.Ruta);
@@ -94,16 +92,6 @@ public class RoutesAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         holder.eincial.setText("Estacion Inicial: "+RouteData.getStatioIni());
         holder.efinal.setText("Estacion Final: "+RouteData.getStatioFin());
         holder.timeestimated.setText(String.valueOf(RouteData.idRuta1)+" Minutos");
-        holder.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onClick(View view, int position, boolean isLongClick) {
-                if(isLongClick)
-                    Toast.makeText(context,"Long click "+position,Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context,"click "+position,Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
     }
 
@@ -111,7 +99,5 @@ public class RoutesAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     public int getItemCount() {
         return routeList.size();
     }
-
-
 
 }
